@@ -1,5 +1,5 @@
 ---
-apiVersion: autoscaling.k8s.io/v1
+apiVersion: autoscaling.k8s.io/v1beta1
 kind: VerticalPodAutoscaler
 metadata:
   name: podinfo-vpa
@@ -14,4 +14,6 @@ spec:
   resourcePolicy:
     containerPolicies:
       - containerName: '*'
-        controlledResources: ["cpu", "memory"]
+        maxAllowed:
+          memory: 5Gi 
+        controlledResources: ["memory"]
