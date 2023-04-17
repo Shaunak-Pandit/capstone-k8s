@@ -1,0 +1,41 @@
+set HTTP_PROXY=http://192.168.59.0:24
+set HTTP_PROXY=http://192.168.39.0:24
+set HTTP_PROXY=http://192.168.49.0:24
+set HTTPS_PROXY=https://192.168.59.0:24
+set HTTP_PROXY=http://10.96.0.0:12
+set HTTPS_PROXY=https://10.96.0.0:12
+set HTTPS_PROXY=https://192.168.39.0:24
+set HTTPS_PROXY=https://192.168.49.0:24
+set NO_PROXY=localhost,127.0.0.1,10.96.0.0/12,192.168.59.0/24,192.168.49.0/24,192.168.39.0/24
+
+minikube start --driver=docker
+
+kubectl apply -f 1-deployment.yaml 
+
+scoop install helm
+
+helm repo add nginx-stable https://helm.nginx.com/stable
+
+helm install main nginx-stable/nginx-ingress --set controller.watchIngressWithoutClass=true --set controller.service.type=NodePort --set controller.service.httpPort.nodePort=30005
+
+kubectl run -ti --rm=true busybox --image=busybox
+
+wget -qO- 10.244.0.8:9113/metrics  #Now that you know your NGINX Ingress Controller tracks the nginx_connections_active metric
+
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+helm install prometheus prometheus-community/prometheus --set server.service.type=NodePort --set server.service.nodePort=30010
+
+minikube service prometheus-server
+
+kubectl apply -f 3-locust.yaml
+
+minikube service locust
+
+helm repo add kedacore https://kedacore.github.io/charts
+
+helm install keda kedacore/keda
+
+kubectl apply -f 4-scaled-object.yaml
+
+kubectl get hpa
