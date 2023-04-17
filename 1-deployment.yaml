@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: podinfo
-        image: shaunakpandit/podinfo
+        image: stefanprodan/podinfo
         ports:
         - containerPort: 9898
 ---
