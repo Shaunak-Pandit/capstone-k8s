@@ -7,10 +7,10 @@ kubectl get pods
 kubectl apply -f 2-ingress.yaml
 kubectl get pods -o wide 
 kubectl run -ti --rm=true busybox --image=busybox
-/# wget -qO- <IP_address>:9113/metrics
+/# wget -qO- http://10.244.0.224:9113/metrics
 /# exit 
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm install prometheus prometheus-community/prometheus --set server.service.type=NodePort --set server.service.nodePort=30010
+helm uninstall prometheus prometheus-community/prometheus --set server.service.type=NodePort --set server.service.nodePort=30010
 kubectl get pods
 minikube service prometheus-server
 kubectl apply -f 3-locust.yaml
@@ -22,3 +22,7 @@ kubectl apply -f 4-scaled-object.yaml
     Number of users – 2000
     Spawn rate – 10
 kubectl get hpa
+
+
+
+
